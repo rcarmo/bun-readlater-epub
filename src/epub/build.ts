@@ -118,7 +118,15 @@ function escapeXml(value: string) {
     .replaceAll("'", "&apos;");
 }
 
+function normalizeHtmlFragmentToXhtml(fragment: string) {
+  return fragment.replace(/<(area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)(\s[^>]*?)?>/gi, (match, tag, attrs = "") => {
+    if (/\/\s*>$/.test(match)) return match;
+    return `<${tag}${attrs} />`;
+  });
+}
+
 function wrapArticleXhtml(article: ExtractedArticle) {
+  const contentHtml = normalizeHtmlFragmentToXhtml(article.contentHtml);
   return `<?xml version="1.0" encoding="utf-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -129,7 +137,7 @@ function wrapArticleXhtml(article: ExtractedArticle) {
     <article>
       <h1>${escapeXml(article.title)}</h1>
       ${article.author ? `<p><em>${escapeXml(article.author)}</em></p>` : ""}
-      ${article.contentHtml}
+      ${contentHtml}
       <hr />
       <p><a href="${escapeXml(article.canonicalUrl)}">Source</a></p>
     </article>
