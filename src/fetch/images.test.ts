@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { Image } from "imagescript";
-import { applyGray4Dither, applyGray8, classifyImage, resizeIfNeeded, transformImageAsset } from "./images";
+import { applyGray4Dither, applyGray8, classifyImage, inlineArticleImages, resizeIfNeeded, transformImageAsset } from "./images";
 import type { ArticleAsset } from "../types";
 
 function collectGrayValues(bitmap: Uint8ClampedArray) {
@@ -142,5 +142,12 @@ describe("image processing", () => {
       expect(Math.abs(decoded.bitmap[i]! - decoded.bitmap[i + 1]!)).toBeLessThanOrEqual(2);
       expect(Math.abs(decoded.bitmap[i + 1]! - decoded.bitmap[i + 2]!)).toBeLessThanOrEqual(2);
     }
+  });
+
+  test("inlineArticleImages preserves non-image article HTML", async () => {
+    const result = await inlineArticleImages("<div><p>Hello world</p></div>", "https://example.com/article");
+    expect(result.contentHtml).toContain("Hello world");
+    expect(result.assets).toHaveLength(0);
+    expect(result.leadImageUrl).toBeNull();
   });
 });

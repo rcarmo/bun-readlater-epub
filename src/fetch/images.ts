@@ -176,7 +176,7 @@ export async function transformImageAsset(asset: ArticleAsset): Promise<ArticleA
 }
 
 export async function inlineArticleImages(contentHtml: string, baseUrl: string): Promise<{ contentHtml: string; assets: ArticleAsset[]; leadImageUrl: string | null }> {
-  const { document } = parseHTML(`<body>${contentHtml}</body>`);
+  const { document } = parseHTML(`<!doctype html><html><body>${contentHtml}</body></html>`);
   const images = [...document.querySelectorAll("img")];
   const assets: ArticleAsset[] = [];
   let index = 0;
