@@ -157,6 +157,7 @@ if (import.meta.main) {
   const config = getConfig();
   mkdirSync(dirname(config.dbPath), { recursive: true });
   mkdirSync(config.articleLibraryRoot, { recursive: true });
+  mkdirSync(config.tempRoot, { recursive: true });
 
   const db = openDatabase(config.dbPath);
   const queue = new SerialQueueService(db, config.articleLibraryRoot);

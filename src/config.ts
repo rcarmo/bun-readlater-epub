@@ -3,6 +3,7 @@ export interface AppConfig {
   token: string;
   dbPath: string;
   articleLibraryRoot: string;
+  tempRoot: string;
   archiveFallbackBaseUrl: string | null;
   imageMaxWidth: number;
   imageMaxHeight: number;
@@ -17,6 +18,7 @@ export function getConfig(): AppConfig {
     token: process.env.READLATER_TOKEN || "change-me",
     dbPath: process.env.READLATER_DB_PATH || "./data/readlater.db",
     articleLibraryRoot: process.env.CALIBRE_ARTICLE_LIBRARY || "./data/calibre-articles",
+    tempRoot: process.env.READLATER_TEMP_ROOT || process.env.TMPDIR || "./data/tmp",
     archiveFallbackBaseUrl: process.env.ARCHIVE_FALLBACK_BASE_URL || null,
     imageMaxWidth: Number.parseInt(process.env.READLATER_IMAGE_MAX_WIDTH || "800", 10),
     imageMaxHeight: Number.parseInt(process.env.READLATER_IMAGE_MAX_HEIGHT || "600", 10),

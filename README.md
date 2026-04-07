@@ -123,6 +123,7 @@ Important environment variables:
 - `READLATER_TOKEN` — shared secret for bookmarklet/UI actions
 - `READLATER_DB_PATH` — service SQLite DB path
 - `CALIBRE_ARTICLE_LIBRARY` — output Calibre article library root
+- `READLATER_TEMP_ROOT` — writable temp directory for intermediate EPUB builds
 - `ARCHIVE_FALLBACK_BASE_URL` — optional fallback provider base URL
 - `READLATER_FETCH_TIMEOUT_MS` — fetch timeout per request
 - `READLATER_FETCH_MAX_HTML_BYTES` — maximum accepted HTML payload size

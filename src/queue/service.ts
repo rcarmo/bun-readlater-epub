@@ -100,6 +100,8 @@ export class SerialQueueService {
   private running = false;
   private readonly deps: QueueDependencies;
 
+  private readonly tempRoot = process.env.READLATER_TEMP_ROOT || process.env.TMPDIR || "./data/tmp";
+
   constructor(
     private readonly db: Database,
     private readonly articleLibraryRoot: string,
@@ -304,7 +306,7 @@ export class SerialQueueService {
         `).run(target.id, updateAt, item.id);
       }
 
-      const tmpPath = join("./out", `${target.id}.epub`);
+      const tmpPath = join(this.tempRoot, `${target.id}.epub`);
       this.db.query(`UPDATE items SET status = 'building', updated_at = ? WHERE id = ?`).run(new Date().toISOString(), target.id);
       const epub = await this.deps.buildEpub(article, tmpPath);
       try {
