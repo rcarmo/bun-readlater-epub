@@ -1,0 +1,12 @@
+services:
+  readlater:
+    build: .
+    image: bun-readlater-epub:local
+    ports:
+      - "8788:8788"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+      - ./books:/books
+    restart: unless-stopped
