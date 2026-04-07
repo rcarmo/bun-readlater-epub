@@ -98,11 +98,12 @@ export function renderItemsPage(items: ItemRecord[], token: string) {
       <title>Read-later queue</title>
       <style>
         body { font-family: system-ui, sans-serif; margin: 2rem; color: #222; }
-        table { border-collapse: collapse; width: 100%; table-layout: fixed; }
-        td, th { border: 1px solid #ccc; padding: 0.6rem; vertical-align: top; text-align: left; }
+        table { border-collapse: collapse; width: 100%; table-layout: auto; }
+        td, th { border: 1px solid #ccc; padding: 0.6rem; vertical-align: top; text-align: left; word-break: break-word; overflow-wrap: anywhere; }
         th { background: #f6f6f6; }
         code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-        pre { white-space: pre-wrap; margin: 0; }
+        code { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
+        pre { white-space: pre-wrap; margin: 0; word-break: break-word; overflow-wrap: anywhere; }
         ul { margin: 0.35rem 0 0 1.2rem; padding: 0; }
         .muted { color: #666; font-size: 0.92em; }
         .status { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.85em; }

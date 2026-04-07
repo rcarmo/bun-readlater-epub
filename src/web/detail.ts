@@ -87,11 +87,12 @@ export function renderItemDetailPage(detail: ItemDetailRecord, token: string) {
       <title>Item detail</title>
       <style>
         body { font-family: system-ui, sans-serif; margin: 2rem; color: #222; }
-        table { border-collapse: collapse; width: 100%; }
-        td, th { border: 1px solid #ccc; padding: 0.55rem; vertical-align: top; text-align: left; }
+        table { border-collapse: collapse; width: 100%; table-layout: auto; }
+        td, th { border: 1px solid #ccc; padding: 0.55rem; vertical-align: top; text-align: left; word-break: break-word; overflow-wrap: anywhere; }
         th { background: #f6f6f6; }
         code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-        pre { white-space: pre-wrap; margin: 0; }
+        code { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
+        pre { white-space: pre-wrap; margin: 0; word-break: break-word; overflow-wrap: anywhere; }
         .muted { color: #666; }
         .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1rem 0; }
         .inline-form { display: inline; }
