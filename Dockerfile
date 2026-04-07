@@ -2,9 +2,7 @@ FROM oven/bun:1.3.11 AS runtime
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gosu \
-    && rm -rf /var/lib/apt/lists/* \
-    && groupadd -g 1000 readlater \
-    && useradd -m -d /home/readlater -s /bin/sh -u 1000 -g 1000 readlater
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
