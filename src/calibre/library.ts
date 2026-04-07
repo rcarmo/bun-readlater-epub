@@ -14,7 +14,7 @@ function slugify(value: string) {
 
 function ensureCalibreSchema(db: Database) {
   db.exec(`
-    PRAGMA journal_mode = WAL;
+    PRAGMA journal_mode = DELETE;
 
     CREATE TABLE IF NOT EXISTS books (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
