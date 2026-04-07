@@ -150,7 +150,7 @@ function escapeAttr(value: string) {
 export function renderBookmarkletPage(baseUrl: string, token: string) {
   const endpoint = `${baseUrl.replace(/\/$/, "")}/save`;
   const itemsUrl = `${baseUrl.replace(/\/$/, "")}/items`;
-  const bookmarklet = `javascript:(()=>{const f=document.createElement('form');f.method='POST';f.action=${JSON.stringify(endpoint)};f.target='_blank';const add=(n,v)=>{const i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;f.appendChild(i);};add('url',location.href);add('token',${JSON.stringify(token)});document.body.appendChild(f);f.submit();f.remove();setTimeout(()=>window.open(${JSON.stringify(itemsUrl)},'_blank'),300);})();`;
+  const bookmarklet = `javascript:(function(){var f=document.createElement('form');f.method='POST';f.action=${JSON.stringify(endpoint)};var add=function(n,v){var i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;f.appendChild(i);};add('url',location.href);add('token',${JSON.stringify(token)});document.body.appendChild(f);f.submit();})();`;
 
   return `<!doctype html>
   <html>
@@ -170,7 +170,8 @@ export function renderBookmarkletPage(baseUrl: string, token: string) {
       <p>Drag this link to your bookmarks bar:</p>
       <p><a class="bookmarklet" href="${escapeAttr(bookmarklet)}">Save to Read Later</a></p>
       <p class="muted">Base URL: <code>${escapeHtml(baseUrl)}</code></p>
-      <p class="muted">It posts the current page URL to <code>/save</code> using a normal browser form submit, opens an acknowledgement page, and then opens the queue page.</p>
+      <p class="muted">It posts the current page URL to <code>/save</code> using a plain browser form submit and should navigate to the acknowledgement page directly.</p>
+      <p class="muted">After saving, use <a href="${escapeAttr(itemsUrl)}">the queue page</a> to inspect progress.</p>
       <h2>Bookmarklet code</h2>
       <textarea readonly>${escapeHtml(bookmarklet)}</textarea>
       <p><a href="/items">Back to queue</a></p>

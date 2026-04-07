@@ -1,11 +1,20 @@
 FROM oven/bun:1.3.11 AS runtime
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gosu \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd -g 1000 readlater \
+    && useradd -m -d /home/readlater -s /bin/sh -u 1000 -g 1000 readlater
+
 WORKDIR /app
 
 COPY package.json bun.lock tsconfig.json ./
 COPY src ./src
 COPY docs ./docs
+COPY docker ./docker
 COPY README.md ./README.md
+
+RUN chmod +x /app/docker/entrypoint.sh
 
 ENV HOST=0.0.0.0 \
     PORT=8788 \
@@ -19,4 +28,5 @@ ENV HOST=0.0.0.0 \
 
 EXPOSE 8788
 
+ENTRYPOINT ["/app/docker/entrypoint.sh"]
 CMD ["bun", "run", "src/server.ts"]

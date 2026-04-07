@@ -6,6 +6,9 @@ services:
       - "8788:8788"
     env_file:
       - .env
+    environment:
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
     volumes:
       - ./data:/data
       - ./books:/books

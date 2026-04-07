@@ -26,6 +26,7 @@ Most read-later services stop at storing a URL or cleaned HTML. This project aim
 The project already includes:
 
 - Safari bookmarklet flow
+- plain form-submit bookmarklet for better browser compatibility
 - HTML acknowledgement page after save
 - queue/status web UI
 - item detail page with attempt history
@@ -107,10 +108,18 @@ Default mounts:
 - `./data` → service DB
 - `./books` → generated Calibre article library
 
+The container now supports LinuxServer-style ownership overrides via:
+
+- `PUID`
+- `PGID`
+
+The bundled `docker-compose.yml` passes those through automatically.
+
 ## Configuration
 
 Important environment variables:
 
+- `PUID` / `PGID` — optional container runtime UID/GID remapping for Docker deployments
 - `READLATER_TOKEN` — shared secret for bookmarklet/UI actions
 - `READLATER_DB_PATH` — service SQLite DB path
 - `CALIBRE_ARTICLE_LIBRARY` — output Calibre article library root
@@ -130,6 +139,7 @@ Prepared deployment/publishing files:
 - `docker-compose.yml`
 - `.dockerignore`
 - `Dockerfile`
+- `docker/entrypoint.sh`
 - `.github/workflows/docker-publish.yml`
 
 The GitHub workflow mirrors the `bun-opds-server` publish pattern:
