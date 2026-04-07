@@ -222,6 +222,16 @@ export async function inlineArticleImages(contentHtml: string, baseUrl: string):
       const asset = await transformImageAsset(originalAsset);
       assets.push(asset);
       img.setAttribute("src", asset.href);
+      img.removeAttribute("srcset");
+      img.removeAttribute("sizes");
+      img.removeAttribute("fetchpriority");
+      img.removeAttribute("loading");
+      img.removeAttribute("decoding");
+      for (const attribute of [...img.getAttributeNames()]) {
+        if (attribute.startsWith("data-")) {
+          img.removeAttribute(attribute);
+        }
+      }
       if (!leadImageUrl) leadImageUrl = absoluteUrl;
       index += 1;
     } catch {

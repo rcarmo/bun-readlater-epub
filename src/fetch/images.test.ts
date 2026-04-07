@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { Image } from "imagescript";
 import { applyGray4Dither, applyGray8, classifyImage, inlineArticleImages, resizeIfNeeded, transformImageAsset } from "./images";
 import type { ArticleAsset } from "../types";
@@ -12,6 +12,13 @@ function collectGrayValues(bitmap: Uint8ClampedArray) {
 }
 
 describe("image processing", () => {
+  const realFetch = globalThis.fetch;
+
+  beforeEach(() => {
+    globalThis.fetch = realFetch;
+    mock.restore();
+  });
+
   test("applyGray8 converts pixels to grayscale", () => {
     const bitmap = new Uint8ClampedArray([
       255, 0, 0, 255,
@@ -149,5 +156,34 @@ describe("image processing", () => {
     expect(result.contentHtml).toContain("Hello world");
     expect(result.assets).toHaveLength(0);
     expect(result.leadImageUrl).toBeNull();
+  });
+
+  test("inlineArticleImages strips remote responsive attributes after localization", async () => {
+    const image = new Image(4, 4);
+    for (let y = 1; y <= image.height; y += 1) {
+      for (let x = 1; x <= image.width; x += 1) {
+        image.setPixelAt(x, y, Image.rgbaToColor(200, 100, 50, 255));
+      }
+    }
+    const bytes = await image.encodeJPEG(85);
+
+    globalThis.fetch = mock(async () => new Response(bytes, {
+      status: 200,
+      headers: { "content-type": "image/jpeg" },
+    })) as typeof fetch;
+
+    const result = await inlineArticleImages(
+      '<figure><img src="https://example.com/image.jpg" srcset="https://example.com/image-1x.jpg 1x, https://example.com/image-2x.jpg 2x" sizes="100vw" fetchpriority="high" loading="lazy" decoding="async" data-attrs="x" /></figure>',
+      "https://example.com/article",
+    );
+
+    expect(result.assets).toHaveLength(1);
+    expect(result.contentHtml).toContain('src="images/img-1.jpg"');
+    expect(result.contentHtml).not.toContain("srcset=");
+    expect(result.contentHtml).not.toContain("sizes=");
+    expect(result.contentHtml).not.toContain("fetchpriority=");
+    expect(result.contentHtml).not.toContain("loading=");
+    expect(result.contentHtml).not.toContain("decoding=");
+    expect(result.contentHtml).not.toContain("data-attrs=");
   });
 });
