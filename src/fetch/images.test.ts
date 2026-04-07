@@ -173,12 +173,13 @@ describe("image processing", () => {
     })) as typeof fetch;
 
     const result = await inlineArticleImages(
-      '<figure><img src="https://example.com/image.jpg" srcset="https://example.com/image-1x.jpg 1x, https://example.com/image-2x.jpg 2x" sizes="100vw" fetchpriority="high" loading="lazy" decoding="async" data-attrs="x" /></figure>',
+      '<figure><picture data-attrs="p"><source type="image/webp" srcset="https://example.com/image.webp 1x, https://example.com/image@2x.webp 2x" sizes="100vw" /><img src="https://example.com/image.jpg" srcset="https://example.com/image-1x.jpg 1x, https://example.com/image-2x.jpg 2x" sizes="100vw" fetchpriority="high" loading="lazy" decoding="async" data-attrs="x" /></picture></figure>',
       "https://example.com/article",
     );
 
     expect(result.assets).toHaveLength(1);
     expect(result.contentHtml).toContain('src="images/img-1.jpg"');
+    expect(result.contentHtml).not.toContain("<source");
     expect(result.contentHtml).not.toContain("srcset=");
     expect(result.contentHtml).not.toContain("sizes=");
     expect(result.contentHtml).not.toContain("fetchpriority=");

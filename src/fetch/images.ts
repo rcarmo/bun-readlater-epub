@@ -232,6 +232,22 @@ export async function inlineArticleImages(contentHtml: string, baseUrl: string):
           img.removeAttribute(attribute);
         }
       }
+
+      const parent = img.parentElement;
+      if (parent?.tagName?.toLowerCase() === "picture") {
+        for (const child of [...parent.children]) {
+          if (child !== img && child.tagName?.toLowerCase() === "source") {
+            child.remove();
+          }
+        }
+        parent.removeAttribute("style");
+        for (const attribute of [...parent.getAttributeNames()]) {
+          if (attribute.startsWith("data-")) {
+            parent.removeAttribute(attribute);
+          }
+        }
+      }
+
       if (!leadImageUrl) leadImageUrl = absoluteUrl;
       index += 1;
     } catch {
