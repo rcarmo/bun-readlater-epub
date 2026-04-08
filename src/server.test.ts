@@ -8,6 +8,7 @@ const config: AppConfig = {
   token: "secret-token",
   dbPath: ":memory:",
   articleLibraryRoot: "/tmp/articles",
+  tempRoot: "/tmp/readlater-tmp",
   archiveFallbackBaseUrl: null,
   imageMaxWidth: 800,
   imageMaxHeight: 600,
@@ -69,6 +70,17 @@ function makeQueue(overrides?: {
 }
 
 describe("server app", () => {
+  test("GET / renders HTML landing page", async () => {
+    const app = createApp(config, makeQueue());
+    const response = await app.fetch(new Request("http://readlater.local/"));
+    const html = await response.text();
+
+    expect(response.status).toBe(200);
+    expect(html).toContain("bun-readlater-epub");
+    expect(html).toContain("Open queue");
+    expect(html).toContain("Install bookmarklet");
+  });
+
   test("GET /items renders HTML queue page", async () => {
     const app = createApp(config, makeQueue({
       listItems: () => [makeItem("item-1", { status: "failed" })],
@@ -78,7 +90,7 @@ describe("server app", () => {
 
     expect(response.status).toBe(200);
     expect(html).toContain("Read-later queue");
-    expect(html).toContain("Install bookmarklet");
+    expect(html).toContain("Bookmarklet");
     expect(html).toContain("Example Article");
     expect(html).toContain("Retry");
     expect(html).toContain("Refetch");

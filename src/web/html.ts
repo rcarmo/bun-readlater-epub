@@ -1,5 +1,31 @@
 import type { ItemRecord } from "../types";
 
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function escapeAttr(value: string) {
+  return escapeHtml(value).replaceAll("'", "&#39;");
+}
+
+function formatDateShort(value: string | null) {
+  if (!value) return "unknown";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toISOString().slice(0, 10);
+}
+
+function renderTopNav() {
+  return `<nav class="topnav">
+    <a href="/">Home</a>
+    <a href="/items">Queue</a>
+    <a href="/bookmarklet">Bookmarklet</a>
+  </nav>`;
+}
+
 function renderActionForms(item: ItemRecord, token: string) {
   const actions: string[] = [];
   if (item.status === "failed") {
@@ -72,6 +98,56 @@ function renderTimestampBlock(item: ItemRecord) {
   `;
 }
 
+export function renderLandingPage(baseUrl: string, items: ItemRecord[]) {
+  const recent = items.slice(0, 5).map((item) => `
+    <li><a href="/items/${encodeURIComponent(item.id)}">${escapeHtml(item.title ?? item.submittedUrl)}</a> <span class="muted">· ${escapeHtml(item.status)} · ${escapeHtml(formatDateShort(item.updatedAt))}</span></li>
+  `).join("\n");
+
+  return `<!doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>bun-readlater-epub</title>
+      <style>
+        body { font-family: system-ui, sans-serif; max-width: 1100px; margin: 2rem auto; padding: 0 1rem; line-height: 1.45; color: #222; }
+        a { color: #0b63ce; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .topnav { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+        .panel { border: 1px solid #ddd; border-radius: 12px; padding: 1rem; }
+        code { background: #f4f4f4; padding: 0.1rem 0.3rem; border-radius: 4px; }
+        .muted { color: #666; }
+      </style>
+    </head>
+    <body>
+      ${renderTopNav()}
+      <h1>bun-readlater-epub</h1>
+      <p>Bookmarklet-first read-later service that saves articles as EPUBs into a dedicated Calibre library.</p>
+      <div class="grid">
+        <section class="panel">
+          <h2>Actions</h2>
+          <ul>
+            <li><a href="/items">Open queue</a></li>
+            <li><a href="/bookmarklet">Install bookmarklet</a></li>
+          </ul>
+        </section>
+        <section class="panel">
+          <h2>Service</h2>
+          <ul>
+            <li><strong>Items:</strong> ${items.length}</li>
+            <li><strong>Base URL:</strong> <code>${escapeHtml(baseUrl)}</code></li>
+          </ul>
+        </section>
+        <section class="panel">
+          <h2>Recent items</h2>
+          <ul>${recent || '<li class="muted">No saved items yet.</li>'}</ul>
+        </section>
+      </div>
+    </body>
+  </html>`;
+}
+
 export function renderItemsPage(items: ItemRecord[], token: string) {
   const rows = items.map((item) => `
     <tr>
@@ -92,12 +168,16 @@ export function renderItemsPage(items: ItemRecord[], token: string) {
   `).join("\n");
 
   return `<!doctype html>
-  <html>
+  <html lang="en">
     <head>
       <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Read-later queue</title>
       <style>
-        body { font-family: system-ui, sans-serif; margin: 2rem; color: #222; }
+        body { font-family: system-ui, sans-serif; max-width: 1200px; margin: 2rem auto; padding: 0 1rem; line-height: 1.45; color: #222; }
+        a { color: #0b63ce; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .topnav { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
         table { border-collapse: collapse; width: 100%; table-layout: auto; }
         td, th { border: 1px solid #ccc; padding: 0.6rem; vertical-align: top; text-align: left; word-break: break-word; overflow-wrap: anywhere; }
         th { background: #f6f6f6; }
@@ -117,8 +197,8 @@ export function renderItemsPage(items: ItemRecord[], token: string) {
       </style>
     </head>
     <body>
+      ${renderTopNav()}
       <h1>Read-later queue</h1>
-      <p><a href="/bookmarklet">Install bookmarklet</a></p>
       <p class="muted">${items.length} item(s)</p>
       <table>
         <thead>
@@ -136,30 +216,22 @@ export function renderItemsPage(items: ItemRecord[], token: string) {
   </html>`;
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
-}
-
-function escapeAttr(value: string) {
-  return escapeHtml(value).replaceAll("'", "&#39;");
-}
-
 export function renderBookmarkletPage(baseUrl: string, token: string) {
   const endpoint = `${baseUrl.replace(/\/$/, "")}/save`;
   const itemsUrl = `${baseUrl.replace(/\/$/, "")}/items`;
   const bookmarklet = `javascript:(function(){var f=document.createElement('form');f.method='POST';f.action=${JSON.stringify(endpoint)};var add=function(n,v){var i=document.createElement('input');i.type='hidden';i.name=n;i.value=v;f.appendChild(i);};add('url',location.href);add('token',${JSON.stringify(token)});document.body.appendChild(f);f.submit();})();`;
 
   return `<!doctype html>
-  <html>
+  <html lang="en">
     <head>
       <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Install bookmarklet</title>
       <style>
-        body { font-family: system-ui, sans-serif; margin: 2rem; color: #222; max-width: 60rem; }
+        body { font-family: system-ui, sans-serif; max-width: 60rem; margin: 2rem auto; padding: 0 1rem; color: #222; line-height: 1.45; }
+        a { color: #0b63ce; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .topnav { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
         code, textarea { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
         textarea { width: 100%; min-height: 12rem; }
         .bookmarklet { display: inline-block; padding: 0.7rem 1rem; background: #2457c5; color: white; text-decoration: none; border-radius: 0.4rem; }
@@ -167,6 +239,7 @@ export function renderBookmarkletPage(baseUrl: string, token: string) {
       </style>
     </head>
     <body>
+      ${renderTopNav()}
       <h1>Install bookmarklet</h1>
       <p>Drag this link to your bookmarks bar:</p>
       <p><a class="bookmarklet" href="${escapeAttr(bookmarklet)}">Save to Read Later</a></p>

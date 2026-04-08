@@ -5,7 +5,7 @@ import { openDatabase } from "./db/schema";
 import { SerialQueueService } from "./queue/service";
 import type { ItemDetailRecord, ItemRecord, SaveResponse } from "./types";
 import { renderItemDetailPage, renderSaveAckPage } from "./web/detail";
-import { renderBookmarkletPage, renderItemsPage } from "./web/html";
+import { renderBookmarkletPage, renderItemsPage, renderLandingPage } from "./web/html";
 
 interface QueueLike {
   listItems(): ItemRecord[];
@@ -27,6 +27,13 @@ export function createApp(config: AppConfig, queue: QueueLike) {
     port: config.port,
     async fetch(request: Request) {
       const url = new URL(request.url);
+
+    if (request.method === "GET" && url.pathname === "/") {
+      const baseUrl = `${url.protocol}//${url.host}`;
+      return new Response(renderLandingPage(baseUrl, queue.listItems()), {
+        headers: { "content-type": "text/html; charset=utf-8" },
+      });
+    }
 
     if (request.method === "GET" && url.pathname === "/items") {
       return new Response(renderItemsPage(queue.listItems(), config.token), {

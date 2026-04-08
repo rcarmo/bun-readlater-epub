@@ -1,6 +1,6 @@
 {
   "name": "bun-readlater-epub",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Instapaper-like self-hosted read-later service that converts saved articles into EPUB files inside a dedicated Calibre library.",
   "license": "MIT",
   "private": true,
