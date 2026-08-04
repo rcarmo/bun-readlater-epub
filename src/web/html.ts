@@ -26,6 +26,21 @@ function renderTopNav() {
   </nav>`;
 }
 
+function renderSubmitUrlForm(token: string) {
+  return `<form method="POST" action="/save" class="save-form">
+    <input type="hidden" name="token" value="${escapeAttr(token)}" />
+    <label for="save-url">URL to save</label>
+    <div class="save-form-row">
+      <input id="save-url" name="url" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com/article" required />
+      <button type="submit">Save URL</button>
+    </div>
+    <label class="checkbox-label">
+      <input type="checkbox" name="forceRefetch" value="true" />
+      Force refetch if this URL was already saved
+    </label>
+  </form>`;
+}
+
 function renderActionForms(item: ItemRecord, token: string) {
   const actions: string[] = [];
   if (item.status === "failed") {
@@ -98,7 +113,7 @@ function renderTimestampBlock(item: ItemRecord) {
   `;
 }
 
-export function renderLandingPage(baseUrl: string, items: ItemRecord[]) {
+export function renderLandingPage(baseUrl: string, items: ItemRecord[], token: string) {
   const recent = items.slice(0, 5).map((item) => `
     <li><a href="/items/${encodeURIComponent(item.id)}">${escapeHtml(item.title ?? item.submittedUrl)}</a> <span class="muted">· ${escapeHtml(item.status)} · ${escapeHtml(formatDateShort(item.updatedAt))}</span></li>
   `).join("\n");
@@ -118,6 +133,11 @@ export function renderLandingPage(baseUrl: string, items: ItemRecord[]) {
         .panel { border: 1px solid #ddd; border-radius: 12px; padding: 1rem; }
         code { background: #f4f4f4; padding: 0.1rem 0.3rem; border-radius: 4px; }
         .muted { color: #666; }
+        .save-form { display: grid; gap: 0.65rem; }
+        .save-form-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .save-form input[type="url"] { flex: 1 1 18rem; min-width: 0; padding: 0.45rem 0.55rem; border: 1px solid #bbb; border-radius: 0.35rem; font: inherit; }
+        .save-form button { border: 1px solid #1f4fb3; border-radius: 0.35rem; background: #2457c5; color: white; padding: 0.45rem 0.8rem; cursor: pointer; font: inherit; }
+        .checkbox-label { display: flex; gap: 0.45rem; align-items: center; color: #666; font-size: 0.92em; }
       </style>
     </head>
     <body>
@@ -125,6 +145,10 @@ export function renderLandingPage(baseUrl: string, items: ItemRecord[]) {
       <h1>bun-readlater-epub</h1>
       <p>Bookmarklet-first read-later service that saves articles as EPUBs into a dedicated Calibre library.</p>
       <div class="grid">
+        <section class="panel">
+          <h2>Save a URL</h2>
+          ${renderSubmitUrlForm(token)}
+        </section>
         <section class="panel">
           <h2>Actions</h2>
           <ul>
@@ -189,6 +213,11 @@ export function renderItemsPage(items: ItemRecord[], token: string) {
         .status { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.85em; }
         .actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
         .inline-form { display: inline; }
+        .save-panel { border: 1px solid #ddd; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; }
+        .save-form { display: grid; gap: 0.65rem; }
+        .save-form-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .save-form input[type="url"] { flex: 1 1 22rem; min-width: 0; padding: 0.45rem 0.55rem; border: 1px solid #bbb; border-radius: 0.35rem; font: inherit; }
+        .checkbox-label { display: flex; gap: 0.45rem; align-items: center; color: #666; font-size: 0.92em; }
         button { border: 1px solid #bbb; border-radius: 0.35rem; background: #f6f6f6; padding: 0.3rem 0.65rem; cursor: pointer; }
         .status-saved { color: #0a6; }
         .status-failed { color: #b00; }
@@ -199,6 +228,10 @@ export function renderItemsPage(items: ItemRecord[], token: string) {
     <body>
       ${renderTopNav()}
       <h1>Read-later queue</h1>
+      <section class="save-panel">
+        <h2>Save a URL</h2>
+        ${renderSubmitUrlForm(token)}
+      </section>
       <p class="muted">${items.length} item(s)</p>
       <table>
         <thead>

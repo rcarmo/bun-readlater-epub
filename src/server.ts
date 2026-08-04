@@ -30,7 +30,7 @@ export function createApp(config: AppConfig, queue: QueueLike) {
 
     if (request.method === "GET" && url.pathname === "/") {
       const baseUrl = `${url.protocol}//${url.host}`;
-      return new Response(renderLandingPage(baseUrl, queue.listItems()), {
+      return new Response(renderLandingPage(baseUrl, queue.listItems(), config.token), {
         headers: { "content-type": "text/html; charset=utf-8" },
       });
     }

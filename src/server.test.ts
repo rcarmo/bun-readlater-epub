@@ -79,6 +79,8 @@ describe("server app", () => {
     expect(html).toContain("bun-readlater-epub");
     expect(html).toContain("Open queue");
     expect(html).toContain("Install bookmarklet");
+    expect(html).toContain("Save a URL");
+    expect(html).toContain("name=\"url\"");
   });
 
   test("GET /items renders HTML queue page", async () => {
@@ -91,6 +93,7 @@ describe("server app", () => {
     expect(response.status).toBe(200);
     expect(html).toContain("Read-later queue");
     expect(html).toContain("Bookmarklet");
+    expect(html).toContain("Save a URL");
     expect(html).toContain("Example Article");
     expect(html).toContain("Retry");
     expect(html).toContain("Refetch");

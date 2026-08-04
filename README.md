@@ -4,7 +4,7 @@ A self-hosted, Bun-based read-later service that turns saved article URLs into s
 
 It is designed for a simple personal workflow:
 
-- save from Safari via a bookmarklet
+- save from Safari via a bookmarklet or the built-in web form
 - fetch and clean up the article server-side
 - embed images for offline reading
 - write the result to a Calibre-compatible library
@@ -26,6 +26,7 @@ Most read-later services stop at storing a URL or cleaned HTML. This project aim
 The project already includes:
 
 - Safari bookmarklet flow
+- built-in URL submission form on the home and queue pages
 - plain form-submit bookmarklet for better browser compatibility
 - HTML acknowledgement page after save
 - queue/status web UI
@@ -45,7 +46,7 @@ The project already includes:
 
 - single-user, trusted LAN
 - shared-secret token auth
-- Safari bookmarklet entrypoint
+- Safari bookmarklet and web-form entrypoints
 - serial queue processing
 - readability-style article extraction
 - Safari-like browser spoofing for fetch requests
@@ -92,8 +93,9 @@ bun run src/server.ts
 
 Then open:
 
-- `http://localhost:8788/items`
-- `http://localhost:8788/bookmarklet`
+- `http://localhost:8788/` to submit a URL from the web form
+- `http://localhost:8788/items` to view the queue and submit additional URLs
+- `http://localhost:8788/bookmarklet` to install the bookmarklet
 
 ### Docker Compose
 
