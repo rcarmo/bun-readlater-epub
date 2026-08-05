@@ -96,7 +96,7 @@ export function renderItemDetailPage(detail: ItemDetailRecord, token: string) {
         .muted { color: #666; }
         .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1rem 0; }
         .inline-form { display: inline; }
-        button { border: 1px solid #bbb; border-radius: 0.35rem; background: #f6f6f6; padding: 0.45rem 0.8rem; cursor: pointer; }
+        button { border: 1px solid #bbb; border-radius: 0.35rem; background: #f6f6f6; color: #222; padding: 0.45rem 0.8rem; cursor: pointer; font: inherit; }
       </style>
     </head>
     <body>

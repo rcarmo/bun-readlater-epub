@@ -218,7 +218,7 @@ export function renderItemsPage(items: ItemRecord[], token: string) {
         .save-form-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .save-form input[type="url"] { flex: 1 1 22rem; min-width: 0; padding: 0.45rem 0.55rem; border: 1px solid #bbb; border-radius: 0.35rem; font: inherit; }
         .checkbox-label { display: flex; gap: 0.45rem; align-items: center; color: #666; font-size: 0.92em; }
-        button { border: 1px solid #bbb; border-radius: 0.35rem; background: #f6f6f6; padding: 0.3rem 0.65rem; cursor: pointer; }
+        button { border: 1px solid #bbb; border-radius: 0.35rem; background: #f6f6f6; color: #222; padding: 0.3rem 0.65rem; cursor: pointer; font: inherit; }
         .status-saved { color: #0a6; }
         .status-failed { color: #b00; }
         .status-duplicate { color: #955f00; }

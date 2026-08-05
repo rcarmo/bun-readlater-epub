@@ -97,6 +97,7 @@ describe("server app", () => {
     expect(html).toContain("Example Article");
     expect(html).toContain("Retry");
     expect(html).toContain("Refetch");
+    expect(html).toContain("background: #f6f6f6; color: #222;");
   });
 
   test("GET /bookmarklet renders install page", async () => {
@@ -122,6 +123,7 @@ describe("server app", () => {
     expect(html).toContain("Refetch");
     expect(html).toContain("Fallback URL");
     expect(html).toContain("https://archive.example/item");
+    expect(html).toContain("background: #f6f6f6; color: #222;");
   });
 
   test("GET /items/:id?format=json returns item detail JSON", async () => {
